@@ -1,7 +1,6 @@
+# 🚀 AWS Lambda Setup Guide (with API Gateway, AWS Bedrock & S3)
 
-# 🚀 AWS Lambda Setup Guide (with API Gateway & AWS Bedrock)
-
-This guide walks you through setting up an **AWS Lambda** function integrated with **API Gateway** for deploying and testing serverless applications — including model calls via **AWS Bedrock**.
+This guide walks you through setting up an **AWS Lambda** function integrated with **API Gateway** for deploying and testing serverless applications — including model calls via **AWS Bedrock** and file storage with **Amazon S3**.
 
 ---
 
@@ -86,8 +85,7 @@ Your Lambda function should now look like this after all configurations:
 To test your API:
 
 1. Copy your **Invoke URL** from the API Gateway stage.
-2. Append your route after `/`.
-   Example:
+2. Append your route after `/`. Example:
 
    ```
    https://5km6fwoud6.execute-api.us-east-1.amazonaws.com/devenvironment/blog-generation
@@ -98,15 +96,49 @@ To test your API:
 
 ---
 
+## ☁️ Step 9: Connect to Amazon S3 
+
+If your Lambda needs to **store or retrieve data**, integrate it with **Amazon S3**.
+
+1. Go to **S3 Console** → Create a new bucket (choose a unique name and region).
+2. Update your Lambda’s **IAM Role permissions** to allow S3 access.
+   Example policy snippet:
+
+   ```json
+   {
+     "Effect": "Allow",
+     "Action": ["s3:PutObject", "s3:GetObject"],
+     "Resource": "arn:aws:s3:::your-bucket-name/*"
+   }
+   ```
+3. Use the following Python code inside Lambda to interact with S3:
+
+   ```python
+   import boto3
+   s3 = boto3.client('s3')
+
+   # Upload example
+   s3.put_object(Bucket='your-bucket-name', Key='output.txt', Body='Hello from Lambda!')
+
+   # Read example
+   response = s3.get_object(Bucket='your-bucket-name', Key='output.txt')
+   content = response['Body'].read().decode('utf-8')
+   print(content)
+   ```
+
+---
+
 ## 🎯 Summary
 
 You’ve now successfully:
 
 * Created and deployed a Lambda function
-* Added necessary dependencies using layers
-* Exposed it via an API Gateway
+* Added dependencies using layers
+* Exposed it via API Gateway
+* Integrated Amazon S3 for data storage
 * Tested it using Postman
 
-Your serverless function is now live and callable from any client application! 🚀
+Your **serverless AI app** is now fully functional, scalable, and production-ready! 🚀
 
-Radhe Radhe 🙏 
+Radhe Radhe 🙏
+
